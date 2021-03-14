@@ -33,9 +33,9 @@ spec:
           - mountPath: /api-doc
             name: swagger-config
           {{ else }}
-          command: ["/bin/sh","-c"]
-          args : {{ (printf "[\"mkdir /api-doc && wget %s -O /api-doc/openapi.json && apk update && apk add jq && jq '.servers += [{\\\"url\\\":\\\"%s\\\",\\\"description\\\":\\\"%s\\\"}]' /api-doc/openapi.json > json.tmp && mv json.tmp /api-doc/openapi.json && /usr/share/nginx/run.sh\"]" .Values.swaggerui.jsonUrl .Values.swaggerui.server.url .Values.swaggerui.server.description ) }} {{ end }}
           env:
+          - name: URLS
+            value: {{ toJson .Values.swaggerui.servers | quote }}
           {{- with .Values.deployment.extraEnv }}
           {{- toYaml . | nindent 10 }}
           {{- end }}
